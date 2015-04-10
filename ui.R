@@ -36,7 +36,11 @@ shinyUI(fluidPage(
            numericInput("sysBP", label = "Your systolic blood pressure", 
                          value = 120, min = 0, max = 400),
            numericInput("glucose", label = "Your glucose level", value = 85)
-    )
+    ),
+    column(6,
+           h4("Risk assessment result :"),
+           textOutput("scoring")
+           )
     
   )
   
