@@ -18,17 +18,23 @@ shinyServer(function(input, output) {
   
   output$scoring <- renderText({
     
-    scoring <- data.frame(male = input$gender, age = input$age, currentSmoker = input$smoker,
-               totChol = input$totChol, sysBP = input$sysBP, 
-               glucose = input$glucose) %>% 
-      toJSON %>%
-       paste0(config$base_url, "?record=", .) %>% gsub('\"', "%22", .) %>%
-      getURL(., ssl.verifypeer = FALSE, 
-              userpwd = paste0(config$usr, ":", config$pwd)) %>% fromJSON %$% outputs %>% as.numeric 
+    scoring <- "-"
+    
+    if(input$submitButton > 0){
+      scoring <- isolate(data.frame(male = input$gender, age = input$age, currentSmoker = input$smoker,
+                                      totChol = input$totChol, sysBP = input$sysBP, 
+                                      glucose = input$glucose) %>% 
+                             toJSON %>%
+                             paste0(config$base_url, "?record=", .) %>% 
+                           gsub('\"', "%22", .) %>%
+                           getURL(., ssl.verifypeer = FALSE, 
+                                    userpwd = paste0(config$usr, ":", config$pwd)) %>%
+                           fromJSON %$% outputs %>% as.numeric) 
+    }
+    scoring 
   })
 })
 
 
-#what <- getURL(gsub('\"', "%22", paste0(base_url, "?record=", query )), 
-#               ssl.verifypeer = FALSE, userpwd = "adapa:i-9749ef9a") %>% fromJSON %$%
+
 
