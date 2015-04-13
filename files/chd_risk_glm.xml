@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<PMML version="4.2" xmlns="http://www.dmg.org/PMML-4_2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dmg.org/PMML-4_2 http://www.dmg.org/v4-2/pmml-4-2.xsd">
+ <Header copyright="Copyright (c) 2015 ALEM" description="Generalized Linear Regression Model">
+  <Extension name="user" value="ALEM" extender="Rattle/PMML"/>
+  <Application name="Rattle/PMML" version="1.4"/>
+  <Timestamp>2015-04-10 17:33:00</Timestamp>
+ </Header>
+ <DataDictionary numberOfFields="7">
+  <DataField name="TenYearCHD" optype="continuous" dataType="double"/>
+  <DataField name="male" optype="continuous" dataType="double"/>
+  <DataField name="age" optype="continuous" dataType="double"/>
+  <DataField name="currentSmoker" optype="continuous" dataType="double"/>
+  <DataField name="totChol" optype="continuous" dataType="double"/>
+  <DataField name="sysBP" optype="continuous" dataType="double"/>
+  <DataField name="glucose" optype="continuous" dataType="double"/>
+ </DataDictionary>
+ <GeneralRegressionModel modelName="CHD_prediction_model" modelType="generalizedLinear" functionName="regression" algorithmName="glm" distribution="binomial" linkFunction="logit">
+  <MiningSchema>
+   <MiningField name="TenYearCHD" usageType="predicted"/>
+   <MiningField name="male" usageType="active"/>
+   <MiningField name="age" usageType="active"/>
+   <MiningField name="currentSmoker" usageType="active"/>
+   <MiningField name="totChol" usageType="active"/>
+   <MiningField name="sysBP" usageType="active"/>
+   <MiningField name="glucose" usageType="active"/>
+  </MiningSchema>
+  <Output>
+   <OutputField name="Predicted_TenYearCHD" feature="predictedValue"/>
+  </Output>
+  <ParameterList>
+   <Parameter name="p0" label="(Intercept)"/>
+   <Parameter name="p1" label="male"/>
+   <Parameter name="p2" label="age"/>
+   <Parameter name="p3" label="currentSmoker"/>
+   <Parameter name="p4" label="totChol"/>
+   <Parameter name="p5" label="sysBP"/>
+   <Parameter name="p6" label="glucose"/>
+  </ParameterList>
+  <FactorList/>
+  <CovariateList>
+   <Predictor name="male"/>
+   <Predictor name="age"/>
+   <Predictor name="currentSmoker"/>
+   <Predictor name="totChol"/>
+   <Predictor name="sysBP"/>
+   <Predictor name="glucose"/>
+  </CovariateList>
+  <PPMatrix>
+   <PPCell value="1" predictorName="male" parameterName="p1"/>
+   <PPCell value="1" predictorName="age" parameterName="p2"/>
+   <PPCell value="1" predictorName="currentSmoker" parameterName="p3"/>
+   <PPCell value="1" predictorName="totChol" parameterName="p4"/>
+   <PPCell value="1" predictorName="sysBP" parameterName="p5"/>
+   <PPCell value="1" predictorName="glucose" parameterName="p6"/>
+  </PPMatrix>
+  <ParamMatrix>
+   <PCell parameterName="p0" df="1" beta="-9.36789898550113"/>
+   <PCell parameterName="p1" df="1" beta="0.602264258079476"/>
+   <PCell parameterName="p2" df="1" beta="0.066758547487491"/>
+   <PCell parameterName="p3" df="1" beta="0.383344618861185"/>
+   <PCell parameterName="p4" df="1" beta="0.00345506830192746"/>
+   <PCell parameterName="p5" df="1" beta="0.0157352792310882"/>
+   <PCell parameterName="p6" df="1" beta="0.00868838790146021"/>
+  </ParamMatrix>
+ </GeneralRegressionModel>
+</PMML>
