@@ -1,0 +1,162 @@
+---
+title: "Create PMML export based on logistic regression model leveraging Framingham heart study data"
+author: "Alexander Lemm"
+date: "27. March 2015"
+output: html_document
+---
+
+```{r warning=FALSE, message=FALSE}
+
+library(pmml)
+library(caTools)
+library(ROCR)
+
+```
+
+
+
+## Read and process data 
+
+```{r}
+
+framingham <- read.csv("./data/framingham.csv")
+
+dim(framingham)
+sum(complete.cases(framingham))
+
+framingham <- framingham[complete.cases(framingham), ]
+
+```
+
+What is the accuracy of the baseline model?
+
+```{r}
+
+tab <- table(framingham$TenYearCHD)
+tab
+
+baseline <- tab[1]/sum(tab)
+baseline
+
+```
+
+Split the data into training and test set:
+
+```{r}
+
+set.seed(37)
+
+split <- sample.split(framingham$TenYearCHD, SplitRatio = 0.65)
+
+fram_train <- framingham[which(split), ]
+fram_test <- framingham[which(!split), ]
+
+```
+
+
+
+## Build logistic regression models and apply them on training set 
+
+## First model
+
+Build model including all available independent variables:
+
+```{r}
+fram_log_complete <- glm(TenYearCHD ~ ., family = binomial, data = fram_train)
+summary(fram_log_complete)
+
+```
+
+The following variables are significant: `male`, `age`, `cigsPerDay`, `totChol`,
+`sysBP` and `glucose`.
+
+In addition, we observe an AIC of `r summary(fram_log_complete)$aic`.
+
+
+Next, we evaluate the in-sample accuracy.
+
+```{r}
+
+predict_train1 <- predict(fram_log_complete, type = "response")
+t1_train <- table(fram_train$TenYearCHD, predict_train1 >= 0.5)
+t1_train
+
+sum(diag(t1_train))/sum(t1_train)
+
+```
+
+### Second model
+
+Next, we build a second model using some of the significant variables plus those identified as risk factors for corony heart diseases in other studies.
+
+```{r}
+
+fram_log2 <- glm(TenYearCHD ~ male + age + currentSmoker + totChol + sysBP +
+                   glucose, family = 'binomial', data = fram_train)
+summary(fram_log2)
+
+```
+
+All independent variables are significant  whereas 4 out of 6 are even highly statistically significant. All $\beta$ coefficients show a positive sign.
+
+```{r}
+
+predict_train2 <- predict(fram_log2, type = "response")
+
+t2_train <- table(fram_train$TenYearCHD, predict_train2 >= 0.5)
+t2_train
+sum(diag(t2_train))/sum(t2_train)
+
+```
+
+We will only apply the second model on our test set even though the first one possesses a slightly higher in-sample accuracy and a slightly higher AIC.
+
+
+## Apply final model on test set 
+
+```{r}
+
+predict_test <- predict(fram_log2, type = "response", newdata = fram_test)
+summary(predict_test)
+t1_test <- table(fram_test$TenYearCHD, predict_test >= 0.5)
+t1_test
+acc <- sum(diag(t1_test))/sum(t1_test)
+acc
+
+```
+
+The result shows that our logistic regression model (`r acc`) has a slight edge over the baseline model (`r baseline`) in terms of overall accuracy. 
+
+Let's have a look at the Receiver Operator Characteristic curve:
+
+```{r}
+
+rocr_pred <- prediction(predict_test, fram_test$TenYearCHD)
+rocr_perf <- performance(rocr_pred, "tpr", "fpr")
+plot(rocr_perf, colorize = TRUE, print.cutoffs.at = seq(0, 1, 0.1), 
+     text.adj = c(-0.1, 1))
+
+
+```
+
+What about the AUC?
+
+```{r}
+
+rocr_auc <- as.numeric(performance(rocr_pred, "auc")@y.values)
+rocr_auc
+
+```
+
+
+## Export PMML file
+
+```{r results='hide'}
+
+glm_pmml <- pmml(fram_log2, model.name = "CHD_prediction_model")
+xmlFile <- file.path(getwd(),"files/chd_risk_glm.xml")
+saveXML(glm_pmml,xmlFile)
+
+```
+
+
