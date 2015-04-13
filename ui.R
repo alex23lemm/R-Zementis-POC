@@ -18,8 +18,10 @@ shinyUI(fluidPage(
     wellPanel("Note: After pressing the submit button your data will be send to a 
               Zementis instance in the Amazon's EC2 cloud. The deployed logistic 
               regression model will predict the probabilty that you will suffer 
-              from a heart disease in 10 years from now. The model was built and trained
-              using data from the Framingham Heart Study.")
+              from a coronary heart disease in 10 years from now. The model was 
+              built and trained using data from the Framingham Heart Study.
+              You will see an error after submitting the data, should the EC2
+              Zementis instance not be available.")
     )
   ),
   
@@ -35,7 +37,9 @@ shinyUI(fluidPage(
                          value  = 230, min = 0, max = 700),
            numericInput("sysBP", label = "Your systolic blood pressure", 
                          value = 120, min = 0, max = 400),
-           numericInput("glucose", label = "Your glucose level", value = 85)
+           numericInput("glucose", label = "Your glucose level", value = 85),
+           actionButton("submitButton", "Submit data", icon("cloud-upload"), 
+                        class = "btn btn-primary action-button")
     ),
     column(6,
            h4("Risk assessment result :"),
