@@ -29,7 +29,8 @@ shinyServer(function(input, output) {
                            gsub('\"', "%22", .) %>%
                            getURL(., ssl.verifypeer = FALSE, 
                                     userpwd = paste0(config$usr, ":", config$pwd)) %>%
-                           fromJSON %$% outputs %>% as.numeric) 
+                           fromJSON %$% outputs %>% as.numeric %>% 
+                           round(digits = 4) *100) %>% paste("%") 
     }
     scoring 
   })
