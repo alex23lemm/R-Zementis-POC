@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <PMML version="4.2" xmlns="http://www.dmg.org/PMML-4_2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dmg.org/PMML-4_2 http://www.dmg.org/v4-2/pmml-4-2.xsd">
- <Header copyright="Copyright (c) 2015 ALEM" description="Generalized Linear Regression Model">
+ <Header copyright="Copyright (c) 2015 ALEM" description="GLM calculating the coronary heart disease risk score">
   <Extension name="user" value="ALEM" extender="Rattle/PMML"/>
   <Application name="Rattle/PMML" version="1.4"/>
-  <Timestamp>2015-04-10 17:33:00</Timestamp>
+  <Timestamp>2015-04-13 13:16:14</Timestamp>
  </Header>
  <DataDictionary numberOfFields="7">
   <DataField name="TenYearCHD" optype="continuous" dataType="double"/>
